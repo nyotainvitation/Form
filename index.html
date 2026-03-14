@@ -681,15 +681,30 @@
 
     <!-- Copyright Footer -->
     <footer class="copyright-footer" data-i18n="copyright_text">
-        &copy; 2026 Nyota Invitation. All rights reserved. Unauthorized duplication is strictly prohibited.ota
+        &copy; 2026 NYOTA Invitations. All rights reserved. Unauthorized duplication is strictly prohibited.
     </footer>
 
     <!-- Application Logic -->
     <script>
         /**
-         * Prevent right click to deter casual copying
+         * Enhanced Anti-Copy Protections
          */
+        // Prevent right click
         document.addEventListener('contextmenu', event => event.preventDefault());
+
+        // Prevent standard copy and cut events
+        document.addEventListener('copy', event => event.preventDefault());
+        document.addEventListener('cut', event => event.preventDefault());
+
+        // Prevent keyboard shortcuts (Ctrl+C, Ctrl+A, Ctrl+X, Ctrl+U, Ctrl+S)
+        document.addEventListener('keydown', (event) => {
+            if (event.ctrlKey || event.metaKey) {
+                const key = event.key.toLowerCase();
+                if (key === 'c' || key === 'a' || key === 'x' || key === 'u' || key === 's') {
+                    event.preventDefault();
+                }
+            }
+        });
 
         /**
          * NYOTA Translations
