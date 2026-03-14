@@ -12,16 +12,15 @@
     
     <style>
         /* ==========================================================================
-           CSS Variables & Base Styling (Luxury Dark Theme)
+           CSS Variables & Base Styling (Luxury Glass Theme)
            ========================================================================== */
         :root {
-            --bg-color: #070707;
-            --bg-surface: #121212;
+            --bg-color: #050505;
             --text-main: #fcfcfc;
-            --text-muted: #888888;
+            --text-muted: #a0a0a0;
             --accent-gold: #c5a059;
             --accent-gold-hover: #dfb96f;
-            --border-color: #2a2a2a;
+            --border-color: rgba(255, 255, 255, 0.15);
             
             --font-serif: 'Playfair Display', serif;
             --font-sans: 'Inter', sans-serif;
@@ -49,6 +48,12 @@
 
         body {
             background-color: var(--bg-color);
+            /* Elegant animated radial gradients to highlight the glass effect */
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(197, 160, 89, 0.12), transparent 40%),
+                radial-gradient(circle at 85% 30%, rgba(255, 255, 255, 0.05), transparent 40%),
+                radial-gradient(circle at 50% 100%, rgba(197, 160, 89, 0.08), transparent 50%);
+            background-attachment: fixed;
             color: var(--text-main);
             font-family: var(--font-sans);
             min-height: 100vh;
@@ -66,7 +71,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 3px;
+            height: 4px;
             background: rgba(255, 255, 255, 0.05);
             z-index: 100;
         }
@@ -75,11 +80,12 @@
             height: 100%;
             width: 0%;
             background: var(--accent-gold);
+            box-shadow: 0 0 10px rgba(197, 160, 89, 0.5);
             transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* ==========================================================================
-           Layout & Form Container
+           Layout & Glass Form Container
            ========================================================================== */
         .app-wrapper {
             flex: 1;
@@ -94,25 +100,34 @@
             width: 100%;
             max-width: 680px;
             position: relative;
+            
+            /* Glassmorphism Magic */
+            background: rgba(20, 20, 20, 0.45);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+            border-radius: 20px;
+            padding: 3.5rem;
         }
 
         /* ==========================================================================
-           Step Animations (Fade Out & Slide Up -> Fade In)
+           Step Animations
            ========================================================================== */
         .step {
             display: none;
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(20px);
             transition: opacity var(--transition-speed) ease, transform var(--transition-speed) ease;
         }
 
         .step.active {
-            display: block; /* Rendered in DOM */
+            display: block;
         }
 
         .step.show {
             opacity: 1;
-            transform: translateY(0); /* Fully visible */
+            transform: translateY(0);
         }
 
         /* ==========================================================================
@@ -123,16 +138,25 @@
             font-weight: 400;
             line-height: 1.2;
             margin-bottom: 1rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            user-select: none;
         }
 
         h1 { font-size: 3rem; }
         h2 { font-size: 2.2rem; }
         
+        .welcome-title {
+            font-size: 3.8rem;
+            margin-bottom: 1.5rem;
+        }
+
         .subtitle {
             font-size: 1.1rem;
             color: var(--text-muted);
             margin-bottom: 3rem;
             font-weight: 300;
+            line-height: 1.5;
+            user-select: none;
         }
 
         /* ==========================================================================
@@ -159,6 +183,7 @@
             letter-spacing: 0.1em;
             color: var(--accent-gold);
             margin-bottom: 0.8rem;
+            user-select: none;
         }
 
         input[type="text"],
@@ -174,7 +199,7 @@
             font-size: 1.2rem;
             font-family: var(--font-sans);
             padding: 0.5rem 0;
-            transition: border-color 0.3s ease;
+            transition: border-color 0.3s ease, background 0.3s ease;
             resize: none;
             overflow: hidden;
         }
@@ -182,10 +207,12 @@
         input:focus, textarea:focus {
             outline: none;
             border-bottom-color: var(--accent-gold);
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 4px 4px 0 0;
         }
 
         input::placeholder, textarea::placeholder {
-            color: #444;
+            color: rgba(255,255,255,0.3);
         }
 
         /* Custom Checkbox */
@@ -203,6 +230,7 @@
             font-size: 1.1rem;
             color: var(--text-main);
             font-weight: 300;
+            user-select: none;
         }
 
         .checkbox-label input {
@@ -210,26 +238,30 @@
         }
 
         .custom-checkbox {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             border: 1px solid var(--border-color);
             margin-right: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
+            flex-shrink: 0;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.03);
         }
 
         .checkbox-label input:checked + .custom-checkbox {
             border-color: var(--accent-gold);
-            background-color: rgba(197, 160, 89, 0.1);
+            background-color: rgba(197, 160, 89, 0.15);
         }
 
         .checkbox-label input:checked + .custom-checkbox::after {
             content: '';
-            width: 10px;
-            height: 10px;
+            width: 12px;
+            height: 12px;
             background-color: var(--accent-gold);
+            border-radius: 2px;
         }
 
         /* ==========================================================================
@@ -252,26 +284,37 @@
             letter-spacing: 0.15em;
             transition: all 0.3s ease;
             padding: 1rem 2.5rem;
+            border-radius: 6px;
+            user-select: none;
         }
 
         .btn-primary {
             background: var(--accent-gold);
             color: var(--bg-color);
-            font-weight: 500;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(197, 160, 89, 0.2);
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             background: var(--accent-gold-hover);
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(197, 160, 89, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
         }
 
         .btn-secondary {
-            color: var(--text-muted);
-            padding: 1rem 0;
+            color: var(--text-main);
+            padding: 1rem 1.5rem;
+            border: 1px solid transparent;
         }
 
         .btn-secondary:hover {
-            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
         }
 
         .btn-add {
@@ -280,30 +323,41 @@
             padding: 0.8rem 1.5rem;
             display: inline-block;
             margin-bottom: 2rem;
+            background: rgba(197, 160, 89, 0.05);
         }
 
         .btn-add:hover {
-            background: rgba(197, 160, 89, 0.1);
+            background: rgba(197, 160, 89, 0.15);
         }
 
         /* ==========================================================================
            Dynamic Event Blocks & Review Layout
            ========================================================================== */
         .event-block {
-            background: var(--bg-surface);
+            /* Glass sub-panel */
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-left: 3px solid var(--accent-gold);
             padding: 2rem;
             margin-bottom: 2rem;
-            border-left: 2px solid var(--accent-gold);
             position: relative;
+            border-radius: 12px;
         }
         
         .remove-event {
             position: absolute;
             top: 1rem;
             right: 1rem;
-            color: #ff4a4a;
+            color: #ff6b6b;
             font-size: 0.7rem;
-            padding: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 4px;
+        }
+        .remove-event:hover {
+            background: rgba(255, 107, 107, 0.1);
         }
 
         .review-section {
@@ -319,6 +373,7 @@
             font-family: var(--font-sans);
             text-transform: uppercase;
             letter-spacing: 0.1em;
+            user-select: none;
         }
 
         .review-grid {
@@ -328,8 +383,8 @@
             font-weight: 300;
         }
 
-        .review-label { color: var(--text-muted); }
-        .review-value { color: var(--text-main); }
+        .review-label { color: var(--text-muted); user-select: none; }
+        .review-value { color: var(--text-main); word-break: break-word; }
 
         /* ==========================================================================
            Success Checkmark Animation
@@ -370,31 +425,33 @@
             100% { stroke-dashoffset: 0; }
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .input-row { flex-direction: column; gap: 0; }
-            h1 { font-size: 2.2rem; }
-            .review-grid { grid-template-columns: 1fr; gap: 0.3rem; margin-bottom: 1rem;}
-            .review-value { margin-bottom: 1rem; }
-        }
-
-        /* Language Switcher */
+        /* ==========================================================================
+           Glass Language Switcher
+           ========================================================================== */
         .lang-switcher {
             position: fixed;
             top: 20px;
             right: 20px;
             z-index: 101;
             display: flex;
-            gap: 10px;
+            gap: 5px;
+            background: rgba(20, 20, 20, 0.5);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 5px;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            user-select: none;
         }
         .lang-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
+            background: transparent;
+            border: none;
             color: var(--text-muted);
-            padding: 6px 12px;
+            padding: 6px 14px;
             font-size: 0.8rem;
             cursor: pointer;
-            border-radius: 4px;
+            border-radius: 20px;
             transition: all 0.3s ease;
             font-family: var(--font-sans);
             text-transform: uppercase;
@@ -402,13 +459,76 @@
         }
         .lang-btn:hover {
             color: var(--text-main);
-            border-color: var(--text-muted);
         }
         .lang-btn.active {
             color: var(--bg-color);
             background: var(--accent-gold);
-            border-color: var(--accent-gold);
-            font-weight: 500;
+            font-weight: 600;
+        }
+
+        /* ==========================================================================
+           Copyright Footer
+           ========================================================================== */
+        .copyright-footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: rgba(255, 255, 255, 0.25);
+            font-size: 0.75rem;
+            font-family: var(--font-sans);
+            letter-spacing: 0.05em;
+            margin-top: auto; /* Pushes to bottom */
+            user-select: none; /* Prevents text highlighting */
+            z-index: 10;
+        }
+
+        /* ==========================================================================
+           Responsive Design (Mobile Optimization)
+           ========================================================================== */
+        @media (max-width: 768px) {
+            .app-wrapper { padding: 1.5rem; margin-top: 3rem; }
+            .form-container { padding: 2.5rem; }
+            .input-row { flex-direction: column; gap: 0; }
+            h1 { font-size: 2.2rem; }
+            h2 { font-size: 1.8rem; }
+            .welcome-title { font-size: 2.8rem; }
+            .subtitle { font-size: 1rem; margin-bottom: 2.5rem; }
+            .review-grid { grid-template-columns: 1fr; gap: 0.4rem; margin-bottom: 1.5rem; }
+            .review-value { margin-bottom: 1rem; }
+            .btn-controls { margin-top: 2rem; }
+        }
+
+        @media (max-width: 480px) {
+            /* Adjust padding and typography for very small phones */
+            body { background-attachment: scroll; } /* Better performance on mobile */
+            .app-wrapper { padding: 1rem; margin-top: 4rem; }
+            .form-container { 
+                padding: 1.8rem 1.2rem; 
+                border-radius: 16px; 
+            }
+            .welcome-title { font-size: 2.4rem; }
+            .subtitle { font-size: 0.95rem; }
+            
+            input[type="text"], input[type="date"], input[type="time"], input[type="url"], textarea { 
+                font-size: 1.05rem; 
+                padding: 0.4rem 0;
+            }
+            label { font-size: 0.7rem; }
+            
+            .event-block { padding: 1.5rem 1rem; }
+            .checkbox-label { font-size: 0.95rem; align-items: flex-start; }
+            
+            /* Stack buttons for easier tapping on small screens */
+            .btn-controls { flex-direction: column-reverse; gap: 1rem; align-items: stretch; }
+            .btn-controls.welcome-btn { flex-direction: column; }
+            .btn-primary { width: 100%; text-align: center; padding: 1rem; }
+            .btn-secondary { width: 100%; text-align: center; padding: 0.8rem 0; background: rgba(255,255,255,0.05); border-radius: 6px; }
+
+            .lang-switcher { top: 15px; right: 15px; }
+            .lang-btn { padding: 5px 10px; font-size: 0.75rem; }
+            
+            .remove-event { position: relative; top: 0; right: 0; width: 100%; margin-bottom: 1rem; text-align: center; }
+            
+            .copyright-footer { padding: 1rem; font-size: 0.7rem; }
         }
     </style>
 </head>
@@ -431,9 +551,9 @@
             
             <!-- STEP 1: Cinematic Welcome -->
             <div class="step active show" id="step-0">
-                <h1 style="font-size: 4rem; margin-bottom: 1.5rem; margin-top: 10vh;"><span data-i18n="title_main">The NYOTA</span><br><i style="color: var(--accent-gold);" data-i18n="title_sub">Experience</i></h1>
-                <p class="subtitle" style="font-size: 1.3rem;" data-i18n="welcome_sub">Let us craft your story into a timeless masterpiece.</p>
-                <div class="btn-controls" style="justify-content: flex-start;">
+                <h1 class="welcome-title"><span data-i18n="title_main">The NYOTA</span><br><i style="color: var(--accent-gold);" data-i18n="title_sub">Experience</i></h1>
+                <p class="subtitle" data-i18n="welcome_sub">Let us craft your story into a timeless masterpiece.</p>
+                <div class="btn-controls welcome-btn" style="justify-content: flex-start; margin-top: 2rem;">
                     <button type="button" class="btn-primary" onclick="nextStep()" data-i18n="btn_begin">Begin the Journey</button>
                 </div>
             </div>
@@ -559,8 +679,18 @@
         </form>
     </div>
 
+    <!-- Copyright Footer -->
+    <footer class="copyright-footer" data-i18n="copyright_text">
+        &copy; 2026 Nyota Invitation. All rights reserved. Unauthorized duplication is strictly prohibited.ota
+    </footer>
+
     <!-- Application Logic -->
     <script>
+        /**
+         * Prevent right click to deter casual copying
+         */
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
         /**
          * NYOTA Translations
          */
@@ -574,7 +704,8 @@
                 review_title: "Review Your Details", review_sub: "Ensure everything is perfect before our design team begins.", success_title: "Masterpiece in Progress", success_sub: "Thank you. Our design team is now at work crafting your signature NYOTA experience.",
                 lbl_event_name: "Event Name", lbl_date: "Date", lbl_time: "Start Time", lbl_venue: "Venue Name", lbl_map: "Google Maps Link", btn_remove: "Remove", not_provided: "Not provided", none: "None",
                 review_lbl_bride: "Bride", review_lbl_groom: "Groom", review_lbl_story: "The Story", review_lbl_media: "Media Link", review_view_link: "View Link", review_sec_couple: "The Couple & Story", review_sec_rituals: "Rituals & Events", review_lbl_datetime: "Date & Time", review_lbl_venue: "Venue", review_sec_guest: "Guest Experience", review_lbl_rsvp: "RSVP Deadline", review_lbl_req_info: "Required Info", review_lbl_welcome: "Welcome Message", req_meal: "Dietary/Meal", req_plus: "Plus One", req_song: "Song Requests",
-                ph_bride: "E.g. Ananya", ph_groom: "E.g. Rohan", ph_story: "Start typing your beautiful story here...", ph_media: "Paste Google Drive or Dropbox link...", ph_event: "E.g. The Wedding, Sangeet...", ph_venue: "E.g. The Grand Palace", ph_map: "Paste venue location link...", ph_welcome: "E.g. We can't wait to celebrate with you!"
+                ph_bride: "E.g. Ananya", ph_groom: "E.g. Rohan", ph_story: "Start typing your beautiful story here...", ph_media: "Paste Google Drive or Dropbox link...", ph_event: "E.g. The Wedding, Sangeet...", ph_venue: "E.g. The Grand Palace", ph_map: "Paste venue location link...", ph_welcome: "E.g. We can't wait to celebrate with you!",
+                copyright_text: "&copy; 2026 NYOTA Invitations. All rights reserved. Unauthorized duplication is strictly prohibited."
             },
             hi: {
                 title_main: "NYOTA", title_sub: "अनुभव", welcome_sub: "आइए आपकी कहानी को एक शाश्वत कृति में उकेरें।", btn_begin: "यात्रा शुरू करें",
@@ -586,7 +717,8 @@
                 lbl_event_name: "कार्यक्रम का नाम", lbl_date: "तारीख", lbl_time: "समय", lbl_venue: "स्थान का नाम", lbl_map: "गूगल मैप्स लिंक", btn_remove: "हटाएं", not_provided: "प्रदान नहीं किया गया", none: "कोई नहीं",
                 review_lbl_bride: "दुल्हन", review_lbl_groom: "दूल्हा", review_lbl_story: "कहानी", review_lbl_media: "मीडिया लिंक", review_view_link: "लिंक देखें", review_sec_couple: "जोड़ा और कहानी", review_sec_rituals: "रस्में और कार्यक्रम", review_lbl_datetime: "तारीख और समय", review_lbl_venue: "स्थान", review_sec_guest: "अतिथि अनुभव", review_lbl_rsvp: "RSVP अंतिम तिथि", review_lbl_req_info: "आवश्यक जानकारी", review_lbl_welcome: "स्वागत संदेश", req_meal: "आहार/भोजन", req_plus: "प्लस वन", req_song: "गाने की फरमाइश",
                 ph_bride: "उदा. अनन्या", ph_groom: "उदा. रोहन", ph_story: "अपनी खूबसूरत कहानी यहाँ लिखना शुरू करें...", ph_media: "Google Drive या Dropbox लिंक पेस्ट करें...", ph_event: "उदा. शादी, संगीत...", ph_venue: "उदा. द ग्रैंड पैलेस", ph_map: "स्थान का लिंक पेस्ट करें...", ph_welcome: "उदा. हम आपके साथ जश्न मनाने के लिए उत्सुक हैं!",
-                btn_submitting: "जमा हो रहा है..."
+                btn_submitting: "जमा हो रहा है...",
+                copyright_text: "&copy; 2026 NYOTA Invitations. सर्वाधिकार सुरक्षित। अनधिकृत नकल सख्त वर्जित है।"
             },
             gu: {
                 title_main: "NYOTA", title_sub: "અનુભવ", welcome_sub: "ચાલો તમારી વાર્તાને એક કાલાતીત શ્રેષ્ઠ કૃતિમાં કંડારીએ.", btn_begin: "યાત્રા શરૂ કરો",
@@ -598,7 +730,8 @@
                 lbl_event_name: "પ્રસંગનું નામ", lbl_date: "તારીખ", lbl_time: "સમય", lbl_venue: "સ્થળનું નામ", lbl_map: "ગૂગલ મેપ્સ લિંક", btn_remove: "દૂર કરો", not_provided: "આપેલ નથી", none: "કોઈ નહિ",
                 review_lbl_bride: "કન્યા", review_lbl_groom: "વરરાજા", review_lbl_story: "વાર્તા", review_lbl_media: "મીડિયા લિંક", review_view_link: "લિંક જુઓ", review_sec_couple: "દંપતી અને વાર્તા", review_sec_rituals: "વિધિઓ અને પ્રસંગો", review_lbl_datetime: "તારીખ અને સમય", review_lbl_venue: "સ્થળ", review_sec_guest: "અતિથિ અનુભવ", review_lbl_rsvp: "RSVP અંતિમ તારીખ", review_lbl_req_info: "આવશ્યક માહિતી", review_lbl_welcome: "સ્વાગત સંદેશ", req_meal: "આહાર/ભોજન", req_plus: "પ્લસ વન", req_song: "ગીતની ફરમાઈશ",
                 ph_bride: "દા.ત. અનન્યા", ph_groom: "દા.ત. રોહન", ph_story: "તમારી સુંદર વાર્તા અહીં લખવાનું શરૂ કરો...", ph_media: "Google Drive અથવા Dropbox લિંક પેસ્ટ કરો...", ph_event: "દા.ત. લગ્ન, સંગીત...", ph_venue: "દા.ત. ધ ગ્રાન્ડ પેલેસ", ph_map: "સ્થળની લિંક પેસ્ટ કરો...", ph_welcome: "દા.ત. અમે તમારી સાથે ઉજવણી કરવા માટે આતુર છીએ!",
-                btn_submitting: "સબમિટ થઈ રહ્યું છે..."
+                btn_submitting: "સબમિટ થઈ રહ્યું છે...",
+                copyright_text: "&copy; 2026 NYOTA Invitations. સર્વાધિકાર સુરક્ષિત. અનધિકૃત નકલ સખત પ્રતિબંધિત છે."
             }
         };
 
@@ -672,6 +805,7 @@
             if (currentStepIndex === steps.length - 1) {
                 progressBar.style.width = '100%';
                 progressBar.style.background = '#4CAF50';
+                progressBar.style.boxShadow = '0 0 10px rgba(76, 175, 80, 0.5)';
             } else {
                 const progress = (currentStepIndex / (totalSteps - 1)) * 100;
                 progressBar.style.width = `${progress}%`;
