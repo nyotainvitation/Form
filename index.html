@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NYOTA | Craft Your Story</title>
+    
+    <!-- Google Fonts for Elegant Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Vadodara:wght@300;400;500&family=Hind:wght@300;400;500&family=Inter:wght@300;400;500&family=Karma:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Rasa:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==========================================================================
+           CSS Variables & Base Styling (Luxury Dark Theme)
+           ========================================================================== */
+        :root {
+            --bg-color: #070707;
+            --bg-surface: #121212;
+            --text-main: #fcfcfc;
+            --text-muted: #888888;
+            --accent-gold: #c5a059;
+            --accent-gold-hover: #dfb96f;
+            --border-color: #2a2a2a;
+            
+            --font-serif: 'Playfair Display', serif;
+            --font-sans: 'Inter', sans-serif;
+            
+            --transition-speed: 0.6s;
+        }
+
+        /* Hindi Typography */
+        html[lang="hi"] {
+            --font-serif: 'Karma', serif;
+            --font-sans: 'Hind', sans-serif;
+        }
+
+        /* Gujarati Typography */
+        html[lang="gu"] {
+            --font-serif: 'Rasa', serif;
+            --font-sans: 'Hind Vadodara', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ==========================================================================
+           Progress Bar
+           ========================================================================== */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.05);
+            z-index: 100;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--accent-gold);
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ==========================================================================
+           Layout & Form Container
+           ========================================================================== */
+        .app-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 680px;
+            position: relative;
+        }
+
+        /* ==========================================================================
+           Step Animations (Fade Out & Slide Up -> Fade In)
+           ========================================================================== */
+        .step {
+            display: none;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity var(--transition-speed) ease, transform var(--transition-speed) ease;
+        }
+
+        .step.active {
+            display: block; /* Rendered in DOM */
+        }
+
+        .step.show {
+            opacity: 1;
+            transform: translateY(0); /* Fully visible */
+        }
+
+        /* ==========================================================================
+           Typography
+           ========================================================================== */
+        h1, h2, h3 {
+            font-family: var(--font-serif);
+            font-weight: 400;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        h1 { font-size: 3rem; }
+        h2 { font-size: 2.2rem; }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            font-weight: 300;
+        }
+
+        /* ==========================================================================
+           Form Controls
+           ========================================================================== */
+        .input-group {
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .input-row .input-group {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-gold);
+            margin-bottom: 0.8rem;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        input[type="url"],
+        textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+            font-size: 1.2rem;
+            font-family: var(--font-sans);
+            padding: 0.5rem 0;
+            transition: border-color 0.3s ease;
+            resize: none;
+            overflow: hidden;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-bottom-color: var(--accent-gold);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #444;
+        }
+
+        /* Custom Checkbox */
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 1.1rem;
+            color: var(--text-main);
+            font-weight: 300;
+        }
+
+        .checkbox-label input {
+            display: none;
+        }
+
+        .custom-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 1px solid var(--border-color);
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-label input:checked + .custom-checkbox {
+            border-color: var(--accent-gold);
+            background-color: rgba(197, 160, 89, 0.1);
+        }
+
+        .checkbox-label input:checked + .custom-checkbox::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background-color: var(--accent-gold);
+        }
+
+        /* ==========================================================================
+           Buttons
+           ========================================================================== */
+        .btn-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4rem;
+        }
+
+        button {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            transition: all 0.3s ease;
+            padding: 1rem 2.5rem;
+        }
+
+        .btn-primary {
+            background: var(--accent-gold);
+            color: var(--bg-color);
+            font-weight: 500;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-gold-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            color: var(--text-muted);
+            padding: 1rem 0;
+        }
+
+        .btn-secondary:hover {
+            color: var(--text-main);
+        }
+
+        .btn-add {
+            color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
+            padding: 0.8rem 1.5rem;
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+
+        .btn-add:hover {
+            background: rgba(197, 160, 89, 0.1);
+        }
+
+        /* ==========================================================================
+           Dynamic Event Blocks & Review Layout
+           ========================================================================== */
+        .event-block {
+            background: var(--bg-surface);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-left: 2px solid var(--accent-gold);
+            position: relative;
+        }
+        
+        .remove-event {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            color: #ff4a4a;
+            font-size: 0.7rem;
+            padding: 0.5rem;
+        }
+
+        .review-section {
+            margin-bottom: 3rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 2rem;
+        }
+
+        .review-section h3 {
+            color: var(--accent-gold);
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            font-family: var(--font-sans);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .review-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 1rem;
+            font-weight: 300;
+        }
+
+        .review-label { color: var(--text-muted); }
+        .review-value { color: var(--text-main); }
+
+        /* ==========================================================================
+           Success Checkmark Animation
+           ========================================================================== */
+        .success-container {
+            text-align: center;
+        }
+
+        .checkmark-svg {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: block;
+            margin: 0 auto 2rem auto;
+            stroke-width: 2;
+            stroke: var(--accent-gold);
+            stroke-miterlimit: 10;
+        }
+
+        .checkmark-circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 2;
+            stroke-miterlimit: 10;
+            stroke: var(--accent-gold);
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+
+        .checkmark-check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+        }
+
+        @keyframes stroke {
+            100% { stroke-dashoffset: 0; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .input-row { flex-direction: column; gap: 0; }
+            h1 { font-size: 2.2rem; }
+            .review-grid { grid-template-columns: 1fr; gap: 0.3rem; margin-bottom: 1rem;}
+            .review-value { margin-bottom: 1rem; }
+        }
+
+        /* Language Switcher */
+        .lang-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 101;
+            display: flex;
+            gap: 10px;
+        }
+        .lang-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-family: var(--font-sans);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .lang-btn:hover {
+            color: var(--text-main);
+            border-color: var(--text-muted);
+        }
+        .lang-btn.active {
+            color: var(--bg-color);
+            background: var(--accent-gold);
+            border-color: var(--accent-gold);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Language Switcher -->
+    <div class="lang-switcher">
+        <button type="button" class="lang-btn active" onclick="setLanguage('en')" id="btn-lang-en">EN</button>
+        <button type="button" class="lang-btn" onclick="setLanguage('hi')" id="btn-lang-hi">HI</button>
+        <button type="button" class="lang-btn" onclick="setLanguage('gu')" id="btn-lang-gu">GU</button>
+    </div>
+
+    <!-- Progress Indicator -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div class="app-wrapper">
+        <form id="nyota-form" class="form-container">
+            
+            <!-- STEP 1: Cinematic Welcome -->
+            <div class="step active show" id="step-0">
+                <h1 style="font-size: 4rem; margin-bottom: 1.5rem; margin-top: 10vh;"><span data-i18n="title_main">The NYOTA</span><br><i style="color: var(--accent-gold);" data-i18n="title_sub">Experience</i></h1>
+                <p class="subtitle" style="font-size: 1.3rem;" data-i18n="welcome_sub">Let us craft your story into a timeless masterpiece.</p>
+                <div class="btn-controls" style="justify-content: flex-start;">
+                    <button type="button" class="btn-primary" onclick="nextStep()" data-i18n="btn_begin">Begin the Journey</button>
+                </div>
+            </div>
+
+            <!-- STEP 2: The Couple & The Story -->
+            <div class="step" id="step-1">
+                <h2 data-i18n="couple_title">The Couple & The Story</h2>
+                <p class="subtitle" data-i18n="couple_sub">Tell us about yourselves and the journey that led you here.</p>
+                
+                <div class="input-row">
+                    <div class="input-group">
+                        <label data-i18n="lbl_bride">Bride's Name</label>
+                        <input type="text" name="brideName" data-i18n-placeholder="ph_bride" placeholder="E.g. Ananya" data-save="true">
+                    </div>
+                    <div class="input-group">
+                        <label data-i18n="lbl_groom">Groom's Name</label>
+                        <input type="text" name="groomName" data-i18n-placeholder="ph_groom" placeholder="E.g. Rohan" data-save="true">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label data-i18n="lbl_story">The Story (How you met, the proposal)</label>
+                    <textarea name="story" rows="2" data-i18n-placeholder="ph_story" placeholder="Start typing your beautiful story here..." class="auto-expand" data-save="true"></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label data-i18n="lbl_media">High-Resolution Media Link</label>
+                    <input type="url" name="mediaLink" data-i18n-placeholder="ph_media" placeholder="Paste Google Drive or Dropbox link..." data-save="true">
+                </div>
+
+                <div class="btn-controls">
+                    <button type="button" class="btn-secondary" onclick="prevStep()" data-i18n="btn_back">Back</button>
+                    <button type="button" class="btn-primary" onclick="nextStep()" data-i18n="btn_next">Next Phase</button>
+                </div>
+            </div>
+
+            <!-- STEP 3: Rituals & Events -->
+            <div class="step" id="step-2">
+                <h2 data-i18n="rituals_title">Rituals & Events</h2>
+                <p class="subtitle" data-i18n="rituals_sub">Detail the celebrations. Add as many events as needed.</p>
+
+                <div id="events-container">
+                    <!-- Dynamic Events Injected Here -->
+                </div>
+
+                <button type="button" class="btn-add" onclick="addEventField()" data-i18n="btn_add_event">+ Add Another Event</button>
+
+                <div class="btn-controls">
+                    <button type="button" class="btn-secondary" onclick="prevStep()" data-i18n="btn_back">Back</button>
+                    <button type="button" class="btn-primary" onclick="nextStep()" data-i18n="btn_next">Next Phase</button>
+                </div>
+            </div>
+
+            <!-- STEP 4: Guest Experience & RSVP -->
+            <div class="step" id="step-3">
+                <h2 data-i18n="guest_title">Guest Experience & RSVP</h2>
+                <p class="subtitle" data-i18n="guest_sub">Customize what you need from your esteemed guests.</p>
+
+                <div class="input-group">
+                    <label data-i18n="lbl_rsvp">RSVP Deadline Date</label>
+                    <input type="date" name="rsvpDeadline" data-save="true">
+                </div>
+
+                <div class="input-group">
+                    <label data-i18n="lbl_guest_info">Required Guest Information</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="guestInfo_meal" data-save="true">
+                            <span class="custom-checkbox"></span>
+                            <span data-i18n="chk_meal">Dietary Restrictions / Meal Preference</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="guestInfo_plusOne" data-save="true">
+                            <span class="custom-checkbox"></span>
+                            <span data-i18n="chk_plusone">Plus One Details</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="guestInfo_songs" data-save="true">
+                            <span class="custom-checkbox"></span>
+                            <span data-i18n="chk_songs">Song Requests for the DJ</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label data-i18n="lbl_welcome_msg">Personalized Dashboard Welcome Message</label>
+                    <textarea name="welcomeMessage" rows="2" data-i18n-placeholder="ph_welcome" placeholder="E.g. We can't wait to celebrate with you!" class="auto-expand" data-save="true"></textarea>
+                </div>
+
+                <div class="btn-controls">
+                    <button type="button" class="btn-secondary" onclick="prevStep()" data-i18n="btn_back">Back</button>
+                    <button type="button" class="btn-primary" onclick="nextStep()" data-i18n="btn_review">Review Details</button>
+                </div>
+            </div>
+
+            <!-- STEP 5: Review & Finalize -->
+            <div class="step" id="step-4">
+                <h2 data-i18n="review_title">Review Your Details</h2>
+                <p class="subtitle" data-i18n="review_sub">Ensure everything is perfect before our design team begins.</p>
+
+                <div id="review-content">
+                    <!-- Summary Injected Here via JS -->
+                </div>
+
+                <div class="btn-controls">
+                    <button type="button" class="btn-secondary" onclick="prevStep()" data-i18n="btn_change">Make Changes</button>
+                    <button type="button" class="btn-primary" onclick="submitForm()" data-i18n="btn_submit">Submit Details</button>
+                </div>
+            </div>
+
+            <!-- SUCCESS STATE -->
+            <div class="step" id="step-5">
+                <div class="success-container">
+                    <svg class="checkmark-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                        <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                        <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                    </svg>
+                    <h2 data-i18n="success_title">Masterpiece in Progress</h2>
+                    <p class="subtitle" style="margin-bottom: 0;" data-i18n="success_sub">Thank you. Our design team is now at work crafting your signature NYOTA experience.</p>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        /**
+         * NYOTA Translations
+         */
+        const translations = {
+            en: {
+                title_main: "The NYOTA", title_sub: "Experience", welcome_sub: "Let us craft your story into a timeless masterpiece.", btn_begin: "Begin the Journey",
+                couple_title: "The Couple & The Story", couple_sub: "Tell us about yourselves and the journey that led you here.", lbl_bride: "Bride's Name", lbl_groom: "Groom's Name", lbl_story: "The Story (How you met, the proposal)", lbl_media: "High-Resolution Media Link",
+                btn_back: "Back", btn_next: "Next Phase", btn_review: "Review Details", btn_submit: "Submit Details", btn_change: "Make Changes",
+                rituals_title: "Rituals & Events", rituals_sub: "Detail the celebrations. Add as many events as needed.", btn_add_event: "+ Add Another Event",
+                guest_title: "Guest Experience & RSVP", guest_sub: "Customize what you need from your esteemed guests.", lbl_rsvp: "RSVP Deadline Date", lbl_guest_info: "Required Guest Information", chk_meal: "Dietary Restrictions / Meal Preference", chk_plusone: "Plus One Details", chk_songs: "Song Requests for the DJ", lbl_welcome_msg: "Personalized Dashboard Welcome Message",
+                review_title: "Review Your Details", review_sub: "Ensure everything is perfect before our design team begins.", success_title: "Masterpiece in Progress", success_sub: "Thank you. Our design team is now at work crafting your signature NYOTA experience.",
+                lbl_event_name: "Event Name", lbl_date: "Date", lbl_time: "Start Time", lbl_venue: "Venue Name", lbl_map: "Google Maps Link", btn_remove: "Remove", not_provided: "Not provided", none: "None",
+                review_lbl_bride: "Bride", review_lbl_groom: "Groom", review_lbl_story: "The Story", review_lbl_media: "Media Link", review_view_link: "View Link", review_sec_couple: "The Couple & Story", review_sec_rituals: "Rituals & Events", review_lbl_datetime: "Date & Time", review_lbl_venue: "Venue", review_sec_guest: "Guest Experience", review_lbl_rsvp: "RSVP Deadline", review_lbl_req_info: "Required Info", review_lbl_welcome: "Welcome Message", req_meal: "Dietary/Meal", req_plus: "Plus One", req_song: "Song Requests",
+                ph_bride: "E.g. Ananya", ph_groom: "E.g. Rohan", ph_story: "Start typing your beautiful story here...", ph_media: "Paste Google Drive or Dropbox link...", ph_event: "E.g. The Wedding, Sangeet...", ph_venue: "E.g. The Grand Palace", ph_map: "Paste venue location link...", ph_welcome: "E.g. We can't wait to celebrate with you!"
+            },
+            hi: {
+                title_main: "NYOTA", title_sub: "अनुभव", welcome_sub: "आइए आपकी कहानी को एक शाश्वत कृति में उकेरें।", btn_begin: "यात्रा शुरू करें",
+                couple_title: "जोड़ा और कहानी", couple_sub: "हमें अपने और यहाँ तक पहुँचने के सफ़र के बारे में बताएँ।", lbl_bride: "दुल्हन का नाम", lbl_groom: "दूल्हे का नाम", lbl_story: "कहानी (आप कैसे मिले, प्रपोज़ल)", lbl_media: "हाई-रिज़ॉल्यूशन मीडिया लिंक",
+                btn_back: "पीछे", btn_next: "अगला चरण", btn_review: "विवरण की समीक्षा करें", btn_submit: "विवरण जमा करें", btn_change: "बदलाव करें",
+                rituals_title: "रस्में और कार्यक्रम", rituals_sub: "समारोह का विवरण दें। जितने चाहें उतने कार्यक्रम जोड़ें।", btn_add_event: "+ एक और कार्यक्रम जोड़ें",
+                guest_title: "अतिथि अनुभव और RSVP", guest_sub: "अपने सम्मानित अतिथियों से आपको क्या जानकारी चाहिए, उसे चुनें।", lbl_rsvp: "RSVP की अंतिम तिथि", lbl_guest_info: "आवश्यक अतिथि जानकारी", chk_meal: "भोजन प्राथमिकता / प्रतिबंध", chk_plusone: "प्लस वन विवरण", chk_songs: "डीजे के लिए गानों की फरमाइश", lbl_welcome_msg: "व्यक्तिगत डैशबोर्ड स्वागत संदेश",
+                review_title: "अपने विवरण की समीक्षा करें", review_sub: "सुनिश्चित करें कि हमारी डिज़ाइन टीम के शुरू करने से पहले सब कुछ सही है।", success_title: "कृति प्रगति पर है", success_sub: "धन्यवाद। हमारी डिज़ाइन टीम अब आपका विशेष NYOTA अनुभव तैयार करने में लग गई है।",
+                lbl_event_name: "कार्यक्रम का नाम", lbl_date: "तारीख", lbl_time: "समय", lbl_venue: "स्थान का नाम", lbl_map: "गूगल मैप्स लिंक", btn_remove: "हटाएं", not_provided: "प्रदान नहीं किया गया", none: "कोई नहीं",
+                review_lbl_bride: "दुल्हन", review_lbl_groom: "दूल्हा", review_lbl_story: "कहानी", review_lbl_media: "मीडिया लिंक", review_view_link: "लिंक देखें", review_sec_couple: "जोड़ा और कहानी", review_sec_rituals: "रस्में और कार्यक्रम", review_lbl_datetime: "तारीख और समय", review_lbl_venue: "स्थान", review_sec_guest: "अतिथि अनुभव", review_lbl_rsvp: "RSVP अंतिम तिथि", review_lbl_req_info: "आवश्यक जानकारी", review_lbl_welcome: "स्वागत संदेश", req_meal: "आहार/भोजन", req_plus: "प्लस वन", req_song: "गाने की फरमाइश",
+                ph_bride: "उदा. अनन्या", ph_groom: "उदा. रोहन", ph_story: "अपनी खूबसूरत कहानी यहाँ लिखना शुरू करें...", ph_media: "Google Drive या Dropbox लिंक पेस्ट करें...", ph_event: "उदा. शादी, संगीत...", ph_venue: "उदा. द ग्रैंड पैलेस", ph_map: "स्थान का लिंक पेस्ट करें...", ph_welcome: "उदा. हम आपके साथ जश्न मनाने के लिए उत्सुक हैं!"
+            },
+            gu: {
+                title_main: "NYOTA", title_sub: "અનુભવ", welcome_sub: "ચાલો તમારી વાર્તાને એક કાલાતીત શ્રેષ્ઠ કૃતિમાં કંડારીએ.", btn_begin: "યાત્રા શરૂ કરો",
+                couple_title: "દંપતી અને વાર્તા", couple_sub: "અમને તમારા વિશે અને અહીં સુધીની સફર વિશે જણાવો.", lbl_bride: "કન્યાનું નામ", lbl_groom: "વરરાજાનું નામ", lbl_story: "વાર્તા (તમે કેવી રીતે મળ્યા, પ્રપોઝલ)", lbl_media: "હાઇ-રિઝોલ્યુશન મીડિયા લિંક",
+                btn_back: "પાછળ", btn_next: "આગળનો તબક્કો", btn_review: "વિગતોની સમીક્ષા કરો", btn_submit: "વિગતો સબમિટ કરો", btn_change: "ફેરફારો કરો",
+                rituals_title: "વિધિઓ અને પ્રસંગો", rituals_sub: "ઉજવણીની વિગતો આપો. જરૂર મુજબ વધુ પ્રસંગો ઉમેરો.", btn_add_event: "+ બીજો પ્રસંગ ઉમેરો",
+                guest_title: "અતિથિ અનુભવ અને RSVP", guest_sub: "તમારા આદરણીય મહેમાનો પાસેથી તમને શું જોઈએ છે તે પસંદ કરો.", lbl_rsvp: "RSVP અંતિમ તારીખ", lbl_guest_info: "આવશ્યક અતિથિ માહિતી", chk_meal: "આહાર પ્રતિબંધો / ભોજન પસંદગી", chk_plusone: "પ્લસ વન વિગતો", chk_songs: "ડીજે માટે ગીતોની ફરમાઈશ", lbl_welcome_msg: "વ્યક્તિગત ડેશબોર્ડ સ્વાગત સંદેશ",
+                review_title: "તમારી વિગતોની સમીક્ષા કરો", review_sub: "ખાતરી કરો કે અમારી ડિઝાઇન ટીમ શરૂ કરે તે પહેલાં બધું બરાબર છે.", success_title: "શ્રેષ્ઠ કૃતિ પ્રગતિમાં છે", success_sub: "આભાર. અમારી ડિઝાઇન ટીમ હવે તમારો વિશેષ NYOTA અનુભવ તૈયાર કરવામાં લાગી ગઈ છે.",
+                lbl_event_name: "પ્રસંગનું નામ", lbl_date: "તારીખ", lbl_time: "સમય", lbl_venue: "સ્થળનું નામ", lbl_map: "ગૂગલ મેપ્સ લિંક", btn_remove: "દૂર કરો", not_provided: "આપેલ નથી", none: "કોઈ નહિ",
+                review_lbl_bride: "કન્યા", review_lbl_groom: "વરરાજા", review_lbl_story: "વાર્તા", review_lbl_media: "મીડિયા લિંક", review_view_link: "લિંક જુઓ", review_sec_couple: "દંપતી અને વાર્તા", review_sec_rituals: "વિધિઓ અને પ્રસંગો", review_lbl_datetime: "તારીખ અને સમય", review_lbl_venue: "સ્થળ", review_sec_guest: "અતિથિ અનુભવ", review_lbl_rsvp: "RSVP અંતિમ તારીખ", review_lbl_req_info: "આવશ્યક માહિતી", review_lbl_welcome: "સ્વાગત સંદેશ", req_meal: "આહાર/ભોજન", req_plus: "પ્લસ વન", req_song: "ગીતની ફરમાઈશ",
+                ph_bride: "દા.ત. અનન્યા", ph_groom: "દા.ત. રોહન", ph_story: "તમારી સુંદર વાર્તા અહીં લખવાનું શરૂ કરો...", ph_media: "Google Drive અથવા Dropbox લિંક પેસ્ટ કરો...", ph_event: "દા.ત. લગ્ન, સંગીત...", ph_venue: "દા.ત. ધ ગ્રાન્ડ પેલેસ", ph_map: "સ્થળની લિંક પેસ્ટ કરો...", ph_welcome: "દા.ત. અમે તમારી સાથે ઉજવણી કરવા માટે આતુર છીએ!"
+            }
+        };
+
+        /**
+         * NYOTA State Management & UI Controller
+         */
+        
+        let currentStepIndex = 0;
+        let currentLang = 'en';
+        const steps = document.querySelectorAll('.step');
+        const progressBar = document.getElementById('progress-bar');
+        const totalSteps = steps.length - 1;
+        const form = document.getElementById('nyota-form');
+
+        let formData = {
+            brideName: '', groomName: '', story: '', mediaLink: '',
+            events: [], rsvpDeadline: '',
+            guestInfo: { meal: false, plusOne: false, songs: false },
+            welcomeMessage: ''
+        };
+
+        const t = (key) => translations[currentLang][key] || key;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('nyota_lang');
+            if (savedLang) setLanguage(savedLang);
+
+            loadFromLocalStorage();
+            
+            if(formData.events.length === 0) {
+                addEventField({ name: '', date: '', time: '', venue: '', mapLink: '' });
+            } else {
+                formData.events.forEach((evt, index) => renderEventField(evt, index));
+            }
+
+            setupAutoExpand();
+            setupAutoSave();
+            updateProgress();
+        });
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('nyota_lang', lang);
+            
+            // Update document language for CSS font variables
+            document.documentElement.lang = lang;
+            
+            // Update active button state
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-lang-${lang}`).classList.add('active');
+
+            // Translate static elements
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang][key]) el.innerHTML = translations[lang][key];
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (translations[lang][key]) el.placeholder = translations[lang][key];
+            });
+
+            // Re-render dynamic components to apply translation
+            const container = document.getElementById('events-container');
+            container.innerHTML = '';
+            formData.events.forEach((evt, i) => renderEventField(evt, i));
+            
+            if (currentStepIndex === 4) buildReviewScreen();
+        }
+
+        function updateProgress() {
+            if (currentStepIndex === steps.length - 1) {
+                progressBar.style.width = '100%';
+                progressBar.style.background = '#4CAF50';
+            } else {
+                const progress = (currentStepIndex / (totalSteps - 1)) * 100;
+                progressBar.style.width = `${progress}%`;
+            }
+        }
+
+        function transitionStep(oldIndex, newIndex) {
+            const oldStep = steps[oldIndex];
+            const newStep = steps[newIndex];
+            oldStep.classList.remove('show');
+
+            setTimeout(() => {
+                oldStep.classList.remove('active');
+                newStep.classList.add('active');
+                
+                if (newIndex === 4) buildReviewScreen();
+                updateProgress();
+
+                setTimeout(() => { newStep.classList.add('show'); }, 50);
+            }, 600);
+        }
+
+        function nextStep() {
+            if (currentStepIndex < steps.length - 1) {
+                transitionStep(currentStepIndex, currentStepIndex + 1);
+                currentStepIndex++;
+            }
+        }
+
+        function prevStep() {
+            if (currentStepIndex > 0) {
+                transitionStep(currentStepIndex, currentStepIndex - 1);
+                currentStepIndex--;
+            }
+        }
+
+        function addEventField(data = { name: '', date: '', time: '', venue: '', mapLink: '' }) {
+            const index = formData.events.length;
+            formData.events.push(data);
+            renderEventField(data, index);
+            saveToLocalStorage();
+        }
+
+        function renderEventField(data, index) {
+            const container = document.getElementById('events-container');
+            const block = document.createElement('div');
+            block.className = 'event-block fade-in';
+            block.setAttribute('data-index', index);
+            
+            block.innerHTML = `
+                ${index > 0 ? `<button type="button" class="btn-secondary remove-event" onclick="removeEvent(${index})">${t('btn_remove')}</button>` : ''}
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>${t('lbl_event_name')}</label>
+                        <input type="text" class="dyn-event" data-field="name" value="${data.name}" placeholder="${t('ph_event')}">
+                    </div>
+                    <div class="input-group">
+                        <label>${t('lbl_date')}</label>
+                        <input type="date" class="dyn-event" data-field="date" value="${data.date}">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>${t('lbl_time')}</label>
+                        <input type="time" class="dyn-event" data-field="time" value="${data.time}">
+                    </div>
+                    <div class="input-group">
+                        <label>${t('lbl_venue')}</label>
+                        <input type="text" class="dyn-event" data-field="venue" value="${data.venue}" placeholder="${t('ph_venue')}">
+                    </div>
+                </div>
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label>${t('lbl_map')}</label>
+                    <input type="url" class="dyn-event" data-field="mapLink" value="${data.mapLink}" placeholder="${t('ph_map')}">
+                </div>
+            `;
+            container.appendChild(block);
+        }
+
+        function removeEvent(index) {
+            formData.events.splice(index, 1);
+            const container = document.getElementById('events-container');
+            container.innerHTML = '';
+            formData.events.forEach((evt, i) => renderEventField(evt, i));
+            saveToLocalStorage();
+        }
+
+        function setupAutoSave() {
+            form.addEventListener('input', (e) => {
+                const target = e.target;
+                
+                if (target.classList.contains('auto-expand')) {
+                    target.style.height = 'inherit';
+                    target.style.height = `${target.scrollHeight}px`;
+                }
+
+                if (target.hasAttribute('data-save')) {
+                    if (target.type === 'checkbox') {
+                        const key = target.name.split('_')[1];
+                        formData.guestInfo[key] = target.checked;
+                    } else {
+                        formData[target.name] = target.value;
+                    }
+                }
+
+                if (target.classList.contains('dyn-event')) {
+                    const block = target.closest('.event-block');
+                    const index = block.getAttribute('data-index');
+                    const field = target.getAttribute('data-field');
+                    formData.events[index][field] = target.value;
+                }
+
+                saveToLocalStorage();
+            });
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('nyota_onboarding', JSON.stringify(formData));
+        }
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('nyota_onboarding');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    formData = { ...formData, ...parsed };
+                    
+                    document.querySelectorAll('[data-save="true"]').forEach(el => {
+                        if (el.type === 'checkbox') {
+                            const key = el.name.split('_')[1];
+                            el.checked = formData.guestInfo[key];
+                        } else {
+                            if(formData[el.name]) el.value = formData[el.name];
+                        }
+                    });
+                } catch (e) {
+                    console.error("Failed to parse local storage", e);
+                }
+            }
+        }
+
+        function setupAutoExpand() {
+            document.querySelectorAll('.auto-expand').forEach(textarea => {
+                if(textarea.value) {
+                    textarea.style.height = 'inherit';
+                    textarea.style.height = `${textarea.scrollHeight}px`;
+                }
+            });
+        }
+
+        function buildReviewScreen() {
+            const container = document.getElementById('review-content');
+            let html = `
+                <div class="review-section">
+                    <h3>${t('review_sec_couple')}</h3>
+                    <div class="review-grid">
+                        <div class="review-label">${t('review_lbl_bride')}</div>
+                        <div class="review-value">${formData.brideName || `<em>${t('not_provided')}</em>`}</div>
+                        
+                        <div class="review-label">${t('review_lbl_groom')}</div>
+                        <div class="review-value">${formData.groomName || `<em>${t('not_provided')}</em>`}</div>
+                        
+                        <div class="review-label">${t('review_lbl_story')}</div>
+                        <div class="review-value">${formData.story || `<em>${t('not_provided')}</em>`}</div>
+                        
+                        <div class="review-label">${t('review_lbl_media')}</div>
+                        <div class="review-value">${formData.mediaLink ? `<a href="${formData.mediaLink}" target="_blank" style="color:var(--accent-gold)">${t('review_view_link')}</a>` : `<em>${t('not_provided')}</em>`}</div>
+                    </div>
+                </div>
+
+                <div class="review-section">
+                    <h3>${t('review_sec_rituals')}</h3>
+            `;
+
+            formData.events.forEach((evt, i) => {
+                html += `
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="color: var(--text-main); font-weight: 500; margin-bottom: 0.5rem;">${evt.name || `Event ${i+1}`}</div>
+                        <div class="review-grid">
+                            <div class="review-label">${t('review_lbl_datetime')}</div>
+                            <div class="review-value">${evt.date || `<em>${t('not_provided')}</em>`} ${evt.time ? `at ${evt.time}` : ''}</div>
+                            <div class="review-label">${t('review_lbl_venue')}</div>
+                            <div class="review-value">${evt.venue || `<em>${t('not_provided')}</em>`}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            const reqs = [];
+            if(formData.guestInfo.meal) reqs.push(t('req_meal'));
+            if(formData.guestInfo.plusOne) reqs.push(t('req_plus'));
+            if(formData.guestInfo.songs) reqs.push(t('req_song'));
+
+            html += `
+                </div>
+                <div class="review-section" style="border-bottom: none;">
+                    <h3>${t('review_sec_guest')}</h3>
+                    <div class="review-grid">
+                        <div class="review-label">${t('review_lbl_rsvp')}</div>
+                        <div class="review-value">${formData.rsvpDeadline || `<em>${t('not_provided')}</em>`}</div>
+                        
+                        <div class="review-label">${t('review_lbl_req_info')}</div>
+                        <div class="review-value">${reqs.length > 0 ? reqs.join(', ') : `<em>${t('none')}</em>`}</div>
+                        
+                        <div class="review-label">${t('review_lbl_welcome')}</div>
+                        <div class="review-value">${formData.welcomeMessage || `<em>${t('not_provided')}</em>`}</div>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function submitForm() {
+            console.log("Submitting payload:", formData);
+            localStorage.removeItem('nyota_onboarding');
+            nextStep();
+        }
+
+    </script>
+</body>
+</html>
